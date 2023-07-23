@@ -1,5 +1,8 @@
 const express = require('express');
 const path = require('path');
+const { ApolloServer } = require('apollo-server-express');
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
 const db = require('./config/connection');
 const routes = require('./routes');
 
@@ -16,6 +19,17 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(routes);
 
+// Create an Apollo Server instance
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+
+// Apply the Apollo Server to the Express app as middleware
+server.applyMiddleware({ app });
+
 db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
+  app.listen(PORT, () =>
+    console.log(`🌍 Now listening on localhost:${PORT}${server.graphqlPath}`)
+  );
 });
