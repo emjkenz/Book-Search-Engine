@@ -16,8 +16,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
 
-app.use(routes);
-
 // Create an Apollo Server instance
 const server = new ApolloServer({
   typeDefs,
